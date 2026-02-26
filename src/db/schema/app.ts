@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
+import { index, integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 const timestamps = { 
   createdAt: timestamp('created_at').defaultNow().notNull(),  
@@ -23,7 +23,10 @@ export const subjects = pgTable('subjects', {
   name: varchar('name', {length: 255}).notNull(),
   description: varchar('description', {length: 255}),
   ...timestamps
-});
+}, (table) => ({ 
+  subjectsDepartmentIdIdx: index('subjects_department_id_idx')
+  .on(table.departmentId),
+}));
 
 export const departmentRelations = relations(departments, ({ many }) => ({ 
   subjects: many(subjects) 
